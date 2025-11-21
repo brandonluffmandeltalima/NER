@@ -6,7 +6,22 @@ import os
 MODEL_PATH = os.path.join("output", "model-best")
 nlp = spacy.load(MODEL_PATH)
 
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # or specify: ["http://127.0.0.1:5500"]
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+@app.get("/")
+def home():
+    return {"status": "running"}
 
 @app.get("/")
 def home():
