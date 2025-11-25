@@ -7,9 +7,6 @@ RUN apt-get update && apt-get install -y git-lfs && git lfs install
 WORKDIR /app
 COPY . .
 
-# Pull LFS model files
-RUN git lfs pull
-
 # Install Python deps
 RUN pip install --no-cache-dir -r requirements.txt
 
