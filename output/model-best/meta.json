@@ -10,10 +10,10 @@
   "license":"",
   "spacy_git_version":"4b65aa7",
   "vectors":{
-    "width":0,
-    "vectors":0,
-    "keys":0,
-    "name":null,
+    "width":300,
+    "vectors":342918,
+    "keys":684830,
+    "name":"en_vectors",
     "mode":"default"
   },
   "labels":{
@@ -23,28 +23,69 @@
     "ner":[
       "APPEAL",
       "ATTORNEY",
+      "CARDINAL",
       "CASE",
+      "CASE\n\nFROM: {ATTORNEY",
+      "CASE\n\nFROM: {UNIT LEGAL ADVISOR",
       "CASE FILE",
       "CASE OUTCOME METRIC",
       "CHARGE",
+      "COMMANDER",
       "COURT",
+      "DATE",
       "DOCUMENT",
+      "ELECTRONIC DEVICE",
+      "EVENT",
       "EVIDENCE",
+      "EVIDENCE ANALYSIS",
+      "FAC",
+      "GPE",
       "HEARING",
       "INVESTIGATOR",
+      "ITEM",
       "JUDGMENT",
+      "LANGUAGE",
+      "LAW",
+      "LEGAL ADVISOR",
       "LEGAL ISSUE",
+      "LOC",
       "LOCATION",
       "MEETING",
+      "MILITARY\n\nFROM: {ATTORNEY",
+      "MILITARY\nUNIT",
+      "MILITARY BASE",
       "MILITARY UNIT",
+      "MONEY",
+      "NORP",
+      "OFFENSE",
+      "OPPOSING\nCOUNSEL",
       "OPPOSING COUNSEL",
+      "ORDINAL",
+      "ORG",
       "OUTCOME",
+      "PERCENT",
+      "PERSON",
       "POLICY",
+      "POLICY NAME",
       "PROCEEDING",
+      "PRODUCT",
+      "QUANTITY",
+      "REGULATION NUMBER",
+      "SENTENCE CAP",
+      "SERVICE\n\nFROM: DEFENSE COUNSEL FOR {SERVICE MEMBER",
+      "SERVICE\nMEMBER",
       "SERVICE MEMBER",
-      "TASK",
+      "STAFF JUDGE ADVOCATE",
+      "TIME",
+      "TIME PERIOD",
+      "TYPE OF OPERATION",
+      "UNIT\nLEGAL ADVISOR",
+      "UNIT LEGAL\nADVISOR",
       "UNIT LEGAL ADVISOR",
-      "WITNESS"
+      "VIDEO FEED",
+      "WITNESS",
+      "WITNESS NAME",
+      "WORK_OF_ART"
     ]
   },
   "pipeline":[
@@ -59,31 +100,16 @@
 
   ],
   "performance":{
-    "ents_f":0.9934735315,
-    "ents_p":0.9927536232,
-    "ents_r":0.9941944848,
+    "ents_f":0.9994982978,
+    "ents_p":0.9994982978,
+    "ents_r":0.9994982978,
     "ents_per_type":{
-      "CASE":{
-        "p":1.0,
+      "ATTORNEY":{
+        "p":0.9990464081,
         "r":1.0,
-        "f":1.0
-      },
-      "SERVICE MEMBER":{
-        "p":1.0,
-        "r":1.0,
-        "f":1.0
-      },
-      "EVIDENCE":{
-        "p":1.0,
-        "r":1.0,
-        "f":1.0
+        "f":0.9995229766
       },
       "INVESTIGATOR":{
-        "p":1.0,
-        "r":1.0,
-        "f":1.0
-      },
-      "DOCUMENT":{
         "p":1.0,
         "r":1.0,
         "f":1.0
@@ -93,37 +119,22 @@
         "r":1.0,
         "f":1.0
       },
-      "WITNESS":{
+      "CASE FILE":{
         "p":1.0,
         "r":1.0,
         "f":1.0
       },
-      "OPPOSING COUNSEL":{
+      "COURT":{
         "p":1.0,
         "r":1.0,
         "f":1.0
       },
-      "CHARGE":{
-        "p":0.9459459459,
-        "r":0.9722222222,
-        "f":0.9589041096
-      },
-      "PROCEEDING":{
+      "CASE":{
         "p":1.0,
         "r":1.0,
         "f":1.0
       },
-      "LOCATION":{
-        "p":1.0,
-        "r":1.0,
-        "f":1.0
-      },
-      "POLICY":{
-        "p":0.96,
-        "r":0.96,
-        "f":0.96
-      },
-      "ATTORNEY":{
+      "DOCUMENT":{
         "p":1.0,
         "r":1.0,
         "f":1.0
@@ -138,32 +149,62 @@
         "r":1.0,
         "f":1.0
       },
-      "OUTCOME":{
-        "p":0.9583333333,
+      "HEARING":{
+        "p":0.9991638796,
         "r":1.0,
-        "f":0.9787234043
+        "f":0.999581765
       },
-      "APPEAL":{
+      "SERVICE\nMEMBER":{
         "p":1.0,
         "r":1.0,
         "f":1.0
       },
-      "COURT":{
-        "p":0.9565217391,
-        "r":0.9565217391,
-        "f":0.9565217391
+      "OUTCOME":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "PROCEEDING":{
+        "p":1.0,
+        "r":0.9992125984,
+        "f":0.9996061442
       },
       "MEETING":{
         "p":1.0,
         "r":1.0,
         "f":1.0
       },
-      "JUDGMENT":{
+      "POLICY":{
         "p":1.0,
         "r":1.0,
         "f":1.0
       },
-      "CASE FILE":{
+      "CHARGE":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "WITNESS":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "SERVICE MEMBER":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "OPPOSING COUNSEL":{
+        "p":1.0,
+        "r":0.9959016393,
+        "f":0.9979466119
+      },
+      "EVIDENCE":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "LOCATION":{
         "p":1.0,
         "r":1.0,
         "f":1.0
@@ -173,18 +214,133 @@
         "r":1.0,
         "f":1.0
       },
-      "HEARING":{
+      "UNIT LEGAL\nADVISOR":{
         "p":1.0,
-        "r":0.9230769231,
-        "f":0.96
+        "r":1.0,
+        "f":1.0
       },
-      "TASK":{
+      "ITEM":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "LEGAL ADVISOR":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "POLICY NAME":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "CASE\n\nFROM: {ATTORNEY":{
+        "p":0.7142857143,
+        "r":1.0,
+        "f":0.8333333333
+      },
+      "STAFF JUDGE ADVOCATE":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "COMMANDER":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "JUDGMENT":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "APPEAL":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "CASE\n\nFROM: {UNIT LEGAL ADVISOR":{
+        "p":0.0,
+        "r":0.0,
+        "f":0.0
+      },
+      "MILITARY\n\nFROM: {ATTORNEY":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "VIDEO FEED":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "OPPOSING\nCOUNSEL":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "ELECTRONIC DEVICE":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "OFFENSE":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "MILITARY\nUNIT":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "TIME PERIOD":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "REGULATION NUMBER":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "UNIT\nLEGAL ADVISOR":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "SENTENCE CAP":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "TYPE OF OPERATION":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "EVIDENCE ANALYSIS":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "SERVICE\n\nFROM: DEFENSE COUNSEL FOR {SERVICE MEMBER":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "WITNESS NAME":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "MILITARY BASE":{
         "p":1.0,
         "r":1.0,
         "f":1.0
       }
     },
-    "tok2vec_loss":15.3100024594,
-    "ner_loss":5.5938353539
+    "tok2vec_loss":0.0,
+    "ner_loss":63.3702468872
   }
 }
