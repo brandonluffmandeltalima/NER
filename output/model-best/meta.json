@@ -1,0 +1,190 @@
+{
+  "lang":"en",
+  "name":"pipeline",
+  "version":"0.0.0",
+  "spacy_version":">=3.8.7,<3.9.0",
+  "description":"",
+  "author":"",
+  "email":"",
+  "url":"",
+  "license":"",
+  "spacy_git_version":"4b65aa7",
+  "vectors":{
+    "width":0,
+    "vectors":0,
+    "keys":0,
+    "name":null,
+    "mode":"default"
+  },
+  "labels":{
+    "tok2vec":[
+
+    ],
+    "ner":[
+      "APPEAL",
+      "ATTORNEY",
+      "CASE",
+      "CASE FILE",
+      "CASE OUTCOME METRIC",
+      "CHARGE",
+      "COURT",
+      "DOCUMENT",
+      "EVIDENCE",
+      "HEARING",
+      "INVESTIGATOR",
+      "JUDGMENT",
+      "LEGAL ISSUE",
+      "LOCATION",
+      "MEETING",
+      "MILITARY UNIT",
+      "OPPOSING COUNSEL",
+      "OUTCOME",
+      "POLICY",
+      "PROCEEDING",
+      "SERVICE MEMBER",
+      "TASK",
+      "UNIT LEGAL ADVISOR",
+      "WITNESS"
+    ]
+  },
+  "pipeline":[
+    "tok2vec",
+    "ner"
+  ],
+  "components":[
+    "tok2vec",
+    "ner"
+  ],
+  "disabled":[
+
+  ],
+  "performance":{
+    "ents_f":0.9934735315,
+    "ents_p":0.9927536232,
+    "ents_r":0.9941944848,
+    "ents_per_type":{
+      "CASE":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "SERVICE MEMBER":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "EVIDENCE":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "INVESTIGATOR":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "DOCUMENT":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "UNIT LEGAL ADVISOR":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "WITNESS":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "OPPOSING COUNSEL":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "CHARGE":{
+        "p":0.9459459459,
+        "r":0.9722222222,
+        "f":0.9589041096
+      },
+      "PROCEEDING":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "LOCATION":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "POLICY":{
+        "p":0.96,
+        "r":0.96,
+        "f":0.96
+      },
+      "ATTORNEY":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "MILITARY UNIT":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "LEGAL ISSUE":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "OUTCOME":{
+        "p":0.9583333333,
+        "r":1.0,
+        "f":0.9787234043
+      },
+      "APPEAL":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "COURT":{
+        "p":0.9565217391,
+        "r":0.9565217391,
+        "f":0.9565217391
+      },
+      "MEETING":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "JUDGMENT":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "CASE FILE":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "CASE OUTCOME METRIC":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "HEARING":{
+        "p":1.0,
+        "r":0.9230769231,
+        "f":0.96
+      },
+      "TASK":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      }
+    },
+    "tok2vec_loss":15.3100024594,
+    "ner_loss":5.5938353539
+  }
+}
