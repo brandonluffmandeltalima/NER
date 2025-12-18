@@ -16,6 +16,7 @@ transformers
 nltk
 msal
 dotenv
-sumyjoblib
+sumy
+joblib
 typing-extensions
 python-dotenv
