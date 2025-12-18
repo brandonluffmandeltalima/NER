@@ -11,6 +11,7 @@ from typing import List
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
 import spacy
@@ -23,6 +24,17 @@ sys.path.append(str(Path(__file__).parent / 'src'))
 from model import EmailClassifier
 from preprocessor import TextPreprocessor
 
+from email_ingestion import OutlookGraphDownloader
+from email import policy
+from email.parser import BytesParser
+from sumy.parsers.plaintext import PlaintextParser
+from sumy.nlp.tokenizers import Tokenizer
+from sumy.summarizers.lsa import LsaSummarizer
+from transformers import pipeline
+import torch
+import nltk
+nltk.download("punkt")
+nltk.download('punkt_tab')
 
 # ----------------------------
 # Initialize FastAPI
@@ -207,6 +219,105 @@ async def ner_extract(input: TextInput):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"NER error: {str(e)}")
+
+
+# ----------------------------
+# Email Ingestion
+# ----------------------------
+
+def get_plain_text_from_mime(mime_bytes):
+    """Extract plain text body from MIME content"""
+    try:
+        msg = BytesParser(policy=policy.default).parsebytes(mime_bytes)
+        if msg.is_multipart():
+            for part in msg.walk():
+                if part.get_content_type() == "text/plain":
+                    return part.get_payload(decode=True).decode('utf-8', errors='ignore')
+        else:
+            return msg.get_payload(decode=True).decode('utf-8', errors='ignore')
+    except:
+        return ""
+
+@app.get("/emails")
+async def get_emails():
+    try:
+        downloader = OutlookGraphDownloader()
+        if not downloader.authenticate():
+            raise HTTPException(status_code=401, detail="Authentication failed")
+
+        messages = downloader.get_messages()
+        if not messages:
+            return JSONResponse(content={"emails": []})
+
+        first_five = messages[1:6]
+        emails_data = []
+
+        for msg in first_five:
+            msg_id = msg.get("id")
+            mime_content = downloader.get_message_mime(msg_id)
+            body = get_plain_text_from_mime(mime_content) if mime_content else ""
+
+            emails_data.append({
+                "id": msg_id,
+                "subject": msg.get("subject", ""),
+                "from": msg.get("from", {}).get("emailAddress", {}).get("address", ""),
+                "to": [r['emailAddress']['address'] for r in msg.get("toRecipients", [])],
+                "receivedDateTime": msg.get("receivedDateTime", ""),
+                "body": body
+            })
+
+        return JSONResponse(content={"emails": emails_data})
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ----------------------------
+# Summarization
+# ----------------------------
+
+MODEL_NAME = "philschmid/bart-large-cnn-samsum"
+
+DEVICE = 0 if torch.cuda.is_available() else -1
+print("CUDA available:", torch.cuda.is_available())
+if torch.cuda.is_available():
+    print("CUDA device:", torch.cuda.get_device_name(0))
+    print("CUDA memory allocated (startup):",
+          torch.cuda.memory_allocated(0) / 1024**2, "MB")
+
+print(f"Using device: {'GPU' if DEVICE == 0 else 'CPU'}")
+
+summarizer = pipeline(
+    "summarization",
+    model=MODEL_NAME,
+    device=DEVICE,  # 👈 GPU enabled
+    torch_dtype=torch.float16 if DEVICE == 0 else torch.float32
+)
+
+print("Summarizer model device:", summarizer.model.device)
+
+
+@app.post("/summarize")
+def summarize(email_text: str):
+    assert DEVICE == 0, "GPU NOT BEING USED — CHECK PYTORCH CUDA INSTALL"
+
+    if torch.cuda.is_available():
+        print("GPU memory BEFORE:",
+              torch.cuda.memory_allocated(0) / 1024**2, "MB")
+
+    summary = summarizer(
+        email_text,
+        max_length=150,
+        min_length=50,
+        truncation=True
+    )
+
+    if torch.cuda.is_available():
+        print("GPU memory AFTER:",
+              torch.cuda.memory_allocated(0) / 1024**2, "MB")
+
+    return {"summary": summary[0]["summary_text"]}
+
 
 
 # ----------------------------
