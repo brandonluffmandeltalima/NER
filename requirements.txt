@@ -14,3 +14,4 @@ requests>=2.31.0
 torch
 transformers
 nltk
+msal
