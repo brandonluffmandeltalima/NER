@@ -52,6 +52,29 @@ classifier = None
 preprocessor = None
 nlp = None
 
+# Lazy-load Email Classifier
+def get_classifier():
+    global classifier, preprocessor
+    if classifier is None:
+        print("Loading Email Classifier Model...")
+        classifier = EmailClassifier()
+        classifier.load_model("models/email_classifier.pkl")
+        preprocessor = TextPreprocessor(lowercase=True, remove_numbers=False)
+        print("Email Classifier loaded.")
+    return classifier, preprocessor
+
+# Lazy-load spaCy NER
+def get_nlp():
+    global nlp
+    if nlp is None:
+        import spacy
+        MODEL_PATH = os.path.join("output", "model-best")
+        print("Loading spaCy NER model...")
+        nlp = spacy.load(MODEL_PATH)
+        print("spaCy NER loaded.")
+    return nlp
+
+
 
 # ----------------------------
 # Pydantic Models (Email Classifier)
@@ -94,26 +117,26 @@ class TextInput(BaseModel):
 # ----------------------------
 # Startup – Load Both Models
 # ----------------------------
-@app.on_event("startup")
-async def load_models():
-    global classifier, preprocessor, nlp
+# @app.on_event("startup")
+# async def load_models():
+#     global classifier, preprocessor, nlp
 
-    print("Loading Email Classifier Model...")
-    classifier = EmailClassifier()
+#     print("Loading Email Classifier Model...")
+#     classifier = EmailClassifier()
 
-    try:
-        classifier.load_model("models/email_classifier.pkl")
-        print("Email classifier loaded.")
-    except FileNotFoundError:
-        print("ERROR: Missing model at models/email_classifier.pkl")
-        raise
+#     try:
+#         classifier.load_model("models/email_classifier.pkl")
+#         print("Email classifier loaded.")
+#     except FileNotFoundError:
+#         print("ERROR: Missing model at models/email_classifier.pkl")
+#         raise
 
-    preprocessor = TextPreprocessor(lowercase=True, remove_numbers=False)
+#     preprocessor = TextPreprocessor(lowercase=True, remove_numbers=False)
 
-    print("Loading spaCy NER model...")
-    MODEL_PATH = os.path.join("output", "model-best")
-    nlp = spacy.load(MODEL_PATH)
-    print("spaCy NER loaded.")
+#     print("Loading spaCy NER model...")
+#     MODEL_PATH = os.path.join("output", "model-best")
+#     nlp = spacy.load(MODEL_PATH)
+#     print("spaCy NER loaded.")
 
 
 # ----------------------------
@@ -141,75 +164,118 @@ async def health():
 # ----------------------------
 # EMAIL CLASSIFIER ENDPOINTS
 # ----------------------------
+# @app.post("/classify", response_model=PredictionOutput)
+# async def classify_email(email: EmailInput):
+
+#     if not classifier or not classifier.is_trained:
+#         raise HTTPException(status_code=503, detail="Model not loaded")
+
+#     try:
+#         text = preprocessor.preprocess_email(email.subject, email.body, remove_stops=False)
+#         result = classifier.predict([text])[0]
+#         result["email_id"] = email.email_id
+#         return result
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=f"Classification error: {str(e)}")
+
 @app.post("/classify", response_model=PredictionOutput)
 async def classify_email(email: EmailInput):
+    classifier_obj, preprocessor_obj = get_classifier()  # lazy load
 
-    if not classifier or not classifier.is_trained:
+    if not classifier_obj.is_trained:
         raise HTTPException(status_code=503, detail="Model not loaded")
 
-    try:
-        text = preprocessor.preprocess_email(email.subject, email.body, remove_stops=False)
-        result = classifier.predict([text])[0]
-        result["email_id"] = email.email_id
-        return result
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Classification error: {str(e)}")
+    text = preprocessor_obj.preprocess_email(email.subject, email.body, remove_stops=False)
+    result = classifier_obj.predict([text])[0]
+    result["email_id"] = email.email_id
+    return result
 
+
+# @app.post("/classify/batch", response_model=BatchPredictionOutput)
+# async def classify_email_batch(batch: EmailBatchInput):
+
+#     if not classifier or not classifier.is_trained:
+#         raise HTTPException(status_code=503, detail="Model not loaded")
+
+#     if not batch.emails:
+#         raise HTTPException(status_code=400, detail="No emails provided")
+
+#     try:
+#         texts = []
+#         ids = []
+
+#         for email in batch.emails:
+#             texts.append(
+#                 preprocessor.preprocess_email(email.subject, email.body, remove_stops=False)
+#             )
+#             ids.append(email.email_id)
+
+#         results = classifier.predict(texts)
+
+#         for r, eid in zip(results, ids):
+#             r["email_id"] = eid
+
+#         return {
+#             "predictions": results,
+#             "total": len(results)
+#         }
+
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=f"Batch classification error: {str(e)}")
 
 @app.post("/classify/batch", response_model=BatchPredictionOutput)
 async def classify_email_batch(batch: EmailBatchInput):
+    classifier_obj, preprocessor_obj = get_classifier()  # lazy load
 
-    if not classifier or not classifier.is_trained:
+    if not classifier_obj.is_trained:
         raise HTTPException(status_code=503, detail="Model not loaded")
 
     if not batch.emails:
         raise HTTPException(status_code=400, detail="No emails provided")
 
-    try:
-        texts = []
-        ids = []
+    texts = [preprocessor_obj.preprocess_email(e.subject, e.body, remove_stops=False) for e in batch.emails]
+    ids = [e.email_id for e in batch.emails]
+    results = classifier_obj.predict(texts)
+    for r, eid in zip(results, ids):
+        r["email_id"] = eid
 
-        for email in batch.emails:
-            texts.append(
-                preprocessor.preprocess_email(email.subject, email.body, remove_stops=False)
-            )
-            ids.append(email.email_id)
-
-        results = classifier.predict(texts)
-
-        for r, eid in zip(results, ids):
-            r["email_id"] = eid
-
-        return {
-            "predictions": results,
-            "total": len(results)
-        }
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Batch classification error: {str(e)}")
+    return {"predictions": results, "total": len(results)}
 
 
 # ----------------------------
 # NER ENDPOINT
 # ----------------------------
+# @app.post("/ner")
+# async def ner_extract(input: TextInput):
+
+#     try:
+#         doc = nlp(input.text)
+#         return {
+#             "entities": [
+#                 {
+#                     "text": ent.text,
+#                     "label": ent.label_,
+#                     "start": ent.start_char,
+#                     "end": ent.end_char
+#                 }
+#                 for ent in doc.ents
+#             ]
+#         }
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=f"NER error: {str(e)}")
+
+
 @app.post("/ner")
 async def ner_extract(input: TextInput):
+    nlp_obj = get_nlp()  # lazy load
 
-    try:
-        doc = nlp(input.text)
-        return {
-            "entities": [
-                {
-                    "text": ent.text,
-                    "label": ent.label_,
-                    "start": ent.start_char,
-                    "end": ent.end_char
-                }
-                for ent in doc.ents
-            ]
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"NER error: {str(e)}")
+    doc = nlp_obj(input.text)
+    return {
+        "entities": [
+            {"text": ent.text, "label": ent.label_, "start": ent.start_char, "end": ent.end_char}
+            for ent in doc.ents
+        ]
+    }
 
 
 # ----------------------------
