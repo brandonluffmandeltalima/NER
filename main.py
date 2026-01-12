@@ -4,7 +4,6 @@ Unified FastAPI Application
 - SpaCy NER Model
 """
 
-import sys
 import os
 from pathlib import Path
 from typing import List
@@ -12,26 +11,18 @@ from typing import List
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 import spacy
 import uvicorn
 
-# Add src to Python path
-sys.path.append(str(Path(__file__).parent / 'src'))
+from email import policy
+from email.parser import BytesParser
 
 # Local imports
 from model import EmailClassifier
 from preprocessor import TextPreprocessor
-
 from email_ingestion import OutlookGraphDownloader
-from email import policy
-from email.parser import BytesParser
-from sumy.parsers.plaintext import PlaintextParser
-from sumy.nlp.tokenizers import Tokenizer
-from sumy.summarizers.lsa import LsaSummarizer
-from transformers import pipeline
-import torch
 import nltk
 nltk.download("punkt")
 nltk.download('punkt_tab')
@@ -270,53 +261,6 @@ async def get_emails():
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-
-# ----------------------------
-# Summarization
-# ----------------------------
-
-MODEL_NAME = "philschmid/bart-large-cnn-samsum"
-
-DEVICE = 0 if torch.cuda.is_available() else -1
-print("CUDA available:", torch.cuda.is_available())
-if torch.cuda.is_available():
-    print("CUDA device:", torch.cuda.get_device_name(0))
-    print("CUDA memory allocated (startup):",
-          torch.cuda.memory_allocated(0) / 1024**2, "MB")
-
-print(f"Using device: {'GPU' if DEVICE == 0 else 'CPU'}")
-
-summarizer = pipeline(
-    "summarization",
-    model=MODEL_NAME,
-    device=DEVICE,  # 👈 GPU enabled
-    torch_dtype=torch.float16 if DEVICE == 0 else torch.float32
-)
-
-print("Summarizer model device:", summarizer.model.device)
-
-
-@app.post("/summarize")
-def summarize(email_text: str):
-    assert DEVICE == 0, "GPU NOT BEING USED — CHECK PYTORCH CUDA INSTALL"
-
-    if torch.cuda.is_available():
-        print("GPU memory BEFORE:",
-              torch.cuda.memory_allocated(0) / 1024**2, "MB")
-
-    summary = summarizer(
-        email_text,
-        max_length=150,
-        min_length=50,
-        truncation=True
-    )
-
-    if torch.cuda.is_available():
-        print("GPU memory AFTER:",
-              torch.cuda.memory_allocated(0) / 1024**2, "MB")
-
-    return {"summary": summary[0]["summary_text"]}
 
 
 
