@@ -14,3 +14,4 @@ dotenv
 joblib
 typing-extensions
 python-dotenv
+spacy-transformers
