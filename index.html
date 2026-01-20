@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NER Annotator</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        background: #f7f7f7;
+    }
+    h1 {
+        margin-bottom: 10px;
+    }
+    textarea {
+        width: 100%;
+        height: 150px;
+        padding: 10px;
+        font-size: 16px;
+    }
+    button {
+        margin-top: 10px;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        background: #0078ff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+    }
+    #output {
+        margin-top: 20px;
+        padding: 20px;
+        background: white;
+        border-radius: 8px;
+        line-height: 1.7;
+        white-space: pre-wrap;
+        font-size: 18px;
+    }
+    .entity {
+        padding: 2px 4px;
+        border-radius: 4px;
+        margin: 1px;
+        background: #ffe08a;
+        border: 1px solid #e5c45c;
+    }
+    .label {
+        font-size: 10px;
+        font-weight: bold;
+        color: #444;
+        margin-left: 4px;
+    }
+</style>
+</head>
+<body>
+
+<h1>NER Annotator</h1>
+
+<label>Enter text:</label>
+<textarea id="inputText"></textarea>
+
+<button onclick="analyze()">Analyze</button>
+
+<h2>Result</h2>
+<div id="output">Your NER output will appear here...</div>
+
+<script>
+// CHANGE THIS to your Render FastAPI URL:
+// const API_URL = "https://ner-docker.onrender.com/ner";
+const API_URL = "http://127.0.0.1:8000/ner";
+
+function analyze() {
+    const text = document.getElementById("inputText").value;
+
+    fetch(API_URL, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ text: text })
+    })
+    .then(res => res.json())
+    .then(data => {
+        highlightNER(text, data.entities);
+    })
+    .catch(err => {
+        document.getElementById("output").innerHTML = "Error: " + err;
+    });
+}
+
+function highlightNER(text, entities) {
+    // sort entities by start index descending to avoid messing up positions
+    entities.sort((a, b) => b.start - a.start);
+
+    let annotated = text;
+
+    entities.forEach(ent => {
+        const before = annotated.slice(0, ent.start);
+        const span = annotated.slice(ent.start, ent.end);
+        const after = annotated.slice(ent.end);
+
+        annotated = 
+            before 
+            + `<span class="entity">${span}<span class="label">${ent.label}</span></span>` 
+            + after;
+    });
+
+    document.getElementById("output").innerHTML = annotated;
+}
+</script>
+
+</body>
+</html>
